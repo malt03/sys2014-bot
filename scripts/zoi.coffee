@@ -66,7 +66,7 @@ zoi = {
         "https://pbs.twimg.com/media/BswuUTPCYAAVX5n.jpg:small"
         "https://pbs.twimg.com/media/BtcSU0xCcAAmz_W.jpg:small"
     ]
-    "おはようございます":[
+    "おはよう":[
         "https://pbs.twimg.com/media/Bs7qd4uCAAAwalT.jpg:small"
         "https://pbs.twimg.com/media/Bts7OpFCcAEkaO4.jpg:small"
     ]
