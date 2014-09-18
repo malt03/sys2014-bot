@@ -3,6 +3,21 @@
 #
 # Commands:
 #   hubot show zoi images when message contain word 'zoi'
+#
+# Usage:
+#
+# Hubot> がんばるzoi
+# Hubot> https://pbs.twimg.com/media/BspWaPYCAAAI6Ui.jpg:small
+#
+# Hubot> しんちょく zoi
+# Hubot> https://pbs.twimg.com/media/Bsw1StjCQAA9NQ1.jpg:small
+#
+# # キーワードが存在しない or 空白の時はランダム
+# Hubot> おやすみなさいzoi
+# Hubot> https://pbs.twimg.com/media/BtcSRdRCMAArUCS.jpg:small
+#
+# Hubot> zoi
+# Hubot> https://pbs.twimg.com/media/Bsw1StjCQAA9NQ1.jpg:small
 
 zoi = {
     "がんばる":[
@@ -25,7 +40,7 @@ zoi = {
     "きたく":[
         "https://pbs.twimg.com/media/BtcSRdRCMAArUCS.jpg:small"
     ]
-    "ごはんにする":[
+    "ごはん":[
         "https://pbs.twimg.com/media/BspWlZFCMAA4fmV.jpg:small"
         "https://pbs.twimg.com/media/BswuMrPCEAEECXg.jpg:small"
         "https://pbs.twimg.com/media/BtcSOp6CcAA9_b4.jpg:small"
@@ -44,21 +59,21 @@ zoi = {
     "あせる":[
         "https://pbs.twimg.com/media/BswuJviCYAMCdGc.png:small"
     ]
-    "しんちょくだめです":[
+    "しんちょく":[
         "https://pbs.twimg.com/media/Bsw1StjCQAA9NQ1.jpg:small"
     ]
-    "きゅうけいにする":[
+    "きゅうけい":[
         "https://pbs.twimg.com/media/BswuUTPCYAAVX5n.jpg:small"
         "https://pbs.twimg.com/media/BtcSU0xCcAAmz_W.jpg:small"
     ]
-    "おはようございまーす":[
+    "おはようございます":[
         "https://pbs.twimg.com/media/Bs7qd4uCAAAwalT.jpg:small"
         "https://pbs.twimg.com/media/Bts7OpFCcAEkaO4.jpg:small"
     ]
     "つかれた":[
         "https://pbs.twimg.com/media/BtcSG05CMAEEyIG.jpg:small"
     ]
-    "ありがとうございます":[
+    "ありがとう":[
         "https://pbs.twimg.com/media/BtcSDbWCQAADuhK.jpg:small"
     ]
     "やった":[
