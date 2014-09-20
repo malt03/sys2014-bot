@@ -4,6 +4,9 @@
 # Commands:
 #   hubot show zoi images when message contain word 'zoi'
 #
+#   zoi list:
+#       Reply all words that hubot listening.
+#
 # Usage:
 #
 # Hubot> がんばるzoi
@@ -18,6 +21,12 @@
 #
 # Hubot> zoi
 # Hubot> https://pbs.twimg.com/media/Bsw1StjCQAA9NQ1.jpg:small
+#
+# Hubot> Shell: がんばる
+# Hubot> Shell: あきらめる
+# ...
+# Hubot> Shell: やった
+# Hubot> よし お仕事頑張るぞ!
 
 zoi = {
     "がんばる":[
@@ -82,6 +91,11 @@ zoi = {
 }
 
 module.exports = (robot) ->
+    robot.hear /^zoi list$/i, (msg) ->
+        for key of zoi
+            msg.reply key
+        msg.send "よし お仕事頑張るぞ!"
+
     robot.hear /^(.*?)\s*zoi$/i, (msg) ->
         key = msg.match[1]
         if zoi[key]?
