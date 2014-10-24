@@ -103,7 +103,7 @@ module.exports = (robot) ->
             msg.send url
         else
             arr = []
-            for key, url of zoi
-                arr.push(url)
+            for key, urls of zoi
+                for url in urls
+                    arr.push(url)
             msg.send arr[Math.floor(Math.random() * arr.length)]
-
