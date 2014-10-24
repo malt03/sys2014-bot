@@ -92,8 +92,10 @@ zoi = {
 
 module.exports = (robot) ->
     robot.hear /^zoi list$/i, (msg) ->
+        list = '\n'
         for key of zoi
-            msg.reply key
+            list += key + '\n'
+        msg.reply list
         msg.send "よし お仕事頑張るぞ!"
 
     robot.hear /^(.*?)\s*zoi$/i, (msg) ->
