@@ -4,7 +4,7 @@
 module.exports = (robot) ->
     robot.hear /(\S+)\+\+/g, (msg) ->
         for match in msg.match
-            user = match.replace(/\+\+/, "");
+            user = match.replace(/\+\+$/, "");
             if not robot.brain.data['bobot']
                 robot.brain.data['bobot'] = {}
             if not robot.brain.data['bobot'][user]
@@ -12,12 +12,12 @@ module.exports = (robot) ->
                     increment:0
                     decrement:0
             robot.brain.data['bobot'][user]['increment']++
-            output_score(robot, msg, user)
+            msg.send output_score(robot, user)
         robot.brain.save()
 
     robot.hear /(\S+)--/g, (msg) ->
         for match in msg.match
-            user = match.replace(/--/, "");
+            user = match.replace(/--$/, "");
             if not robot.brain.data['bobot']
                 robot.brain.data['bobot'] = {}
             if not robot.brain.data['bobot'][user]
@@ -25,7 +25,7 @@ module.exports = (robot) ->
                     increment:0
                     decrement:0
             robot.brain.data['bobot'][user]['decrement']++
-            output_score(robot, msg, user)
+            msg.send output_score(robot, user)
         robot.brain.save()
 
     robot.hear /^ranking$/i, (msg) ->
@@ -36,11 +36,13 @@ module.exports = (robot) ->
             ranking[i++] = {user:user, score:score}
         ranking.sort (a, b) ->
             b['score'] - a['score']
-        for n in ranking
-            output_score(robot, msg, n['user'])
+        output = ''
+        for n, i in ranking
+            output += (i+1) + '位 : ' + output_score(robot, n['user']) + '\n'
+        msg.send output
 
-output_score = (robot, msg, user) ->
+output_score = (robot, user) ->
     increment = robot.brain.data['bobot'][user]['increment']
     decrement = robot.brain.data['bobot'][user]['decrement']
     score = (increment - decrement)
-    msg.send user + ' => '  + score + ' (++:' + increment + ', --:' + decrement + ')'
+    return user + ' => '  + score + ' (++:' + increment + ', --:' + decrement + ')'
