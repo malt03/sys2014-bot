@@ -101,6 +101,29 @@ module.exports = (robot) ->
         msg.reply list
         msg.send "よし お仕事頑張るぞ!"
 
+    robot.hear /^zoi add (.*?)\s(.*?)$/, (msg) ->
+        key = msg.match[1]
+        image_url = msg.match[1]
+        if not robot.brain.data['zoi']
+            robot.brain.data['zoi'] = {}
+        if robot.brain.data['zoi'][key]
+            msg.reply "#{key}はもう登録してあります。消したいときは zoi remove キーワード url してください。"
+        if not robot.brain.data['zoi'][key]
+            robot.brain.data['zoi'][key] = image_url
+            msg.reply "#{key}を登録しました！"
+
+    robot.hear /^zoi remove (.*?)\s(.*?)$/, (msg) ->
+        key = msg.match[1]
+        image_url = msg.match[1]
+        if not robot.brain.data['zoi']
+            robot.brain.data['zoi'] = {}
+        if not robot.brain.data['zoi'][key]
+            msg.reply "#{key}はまだ登録してませんよ？"
+        if robot.brain.data['zoi'][key]
+            delete robot.brain.data['zoi'][key]
+            msg.reply "#{key}の登録を消しました！"
+
+
     robot.hear /^(.*?)\s*zoi$/i, (msg) ->
         key = msg.match[1]
         if zoi[key]?
