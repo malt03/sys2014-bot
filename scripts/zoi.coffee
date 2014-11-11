@@ -98,36 +98,47 @@ module.exports = (robot) ->
         list = '\n'
         for key of zoi
             list += key + '\n'
+        for key of robot.brain.data['zoi']
+            list += "#{key}" + '\n'
         msg.reply list
         msg.send "よし お仕事頑張るぞ!"
 
     robot.hear /^zoi add (.*?)\s(.*?)$/, (msg) ->
         key = msg.match[1]
-        image_url = msg.match[1]
+        image_url = msg.match[2]
         if not robot.brain.data['zoi']
             robot.brain.data['zoi'] = {}
+        if zoi[key]
+            msg.reply "#{key} はデフォルトで登録されています！　変更したいときはhttps://github.com/malt03/sys2014-bot にプルリクエストしてください。"
+            return
         if robot.brain.data['zoi'][key]
-            msg.reply "#{key}はもう登録してあります。消したいときは zoi remove キーワード url してください。"
+            msg.reply "#{key} はもう登録してあります。消したいときは zoi remove キーワード url してください。"
+            return
         if not robot.brain.data['zoi'][key]
             robot.brain.data['zoi'][key] = image_url
-            msg.reply "#{key}を登録しました！"
+            msg.reply "#{key} を登録しました！"
 
-    robot.hear /^zoi remove (.*?)\s(.*?)$/, (msg) ->
+    robot.hear /^zoi remove (.*?)$/, (msg) ->
         key = msg.match[1]
-        image_url = msg.match[1]
         if not robot.brain.data['zoi']
             robot.brain.data['zoi'] = {}
+        if zoi[key]
+            msg.reply "#{key} はデフォルトで登録されています！　変更したいときはhttps://github.com/malt03/sys2014-bot にプルリクエストしてください。"
+            return
         if not robot.brain.data['zoi'][key]
-            msg.reply "#{key}はまだ登録してませんよ？"
+            msg.reply "#{key} はまだ登録してませんよ？"
+            return
         if robot.brain.data['zoi'][key]
             delete robot.brain.data['zoi'][key]
-            msg.reply "#{key}の登録を消しました！"
+            msg.reply "#{key} の登録を消しました！"
 
 
     robot.hear /^(.*?)\s*zoi$/i, (msg) ->
         key = msg.match[1]
         if zoi[key]?
             url = zoi[key][Math.floor(Math.random() * zoi[key].length)]
+            msg.send url
+        else if url = robot.brain.data['zoi'][key]
             msg.send url
         else
             arr = []
