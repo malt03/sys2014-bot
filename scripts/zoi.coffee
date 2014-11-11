@@ -37,6 +37,9 @@ zoi = {
         "https://pbs.twimg.com/media/BspWaPYCAAAI6Ui.jpg:small"
         "https://pbs.twimg.com/media/BswuTdaCQAAQCkg.jpg:small"
     ]
+    "ぷっ": [
+        "https://pbs.twimg.com/media/BuR1g3nCAAAq6eZ.jpg:small"
+    ]
     "あきらめる":[
         "https://pbs.twimg.com/media/BspWc7LCAAAPzhS.jpg:small"
         "https://pbs.twimg.com/media/BspWfqoCYAE836J.jpg:small"
