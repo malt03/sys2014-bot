@@ -98,8 +98,10 @@ module.exports = (robot) ->
         list = '\n'
         for key of zoi
             list += key + '\n'
-        for key of robot.brain.data['zoi']
-            list += "#{key}" + '\n'
+        if robot.brain.data['zoi']
+            list += '\n' + 'ここからはzoi add {token} {url}で追加したzoiです！' + '\n\n'
+            for key of robot.brain.data['zoi']
+                list += "#{key}" + '\n'
         msg.reply list
         msg.send "よし お仕事頑張るぞ!"
 
