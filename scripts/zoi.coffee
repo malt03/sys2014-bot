@@ -15,6 +15,16 @@
 # Hubot> しんちょく zoi
 # Hubot> https://pbs.twimg.com/media/Bsw1StjCQAA9NQ1.jpg:small
 #
+# # zoi add {token} {url}で記憶させられる
+# Hubot> zoi add あいうえお some-image-url
+# Hubot> あいうえおzoi
+# Hubot> some-image-url
+#
+# # なお、1 tokenにつき1 urlのみしか対応づけられない。
+# 
+# zoi remove {token} で記憶を忘れさせられる
+# Hubot> zoi remove あいうえお
+# 
 # # キーワードが存在しない or 空白の時はランダム
 # Hubot> おやすみなさいzoi
 # Hubot> https://pbs.twimg.com/media/BtcSRdRCMAArUCS.jpg:small
@@ -22,6 +32,7 @@
 # Hubot> zoi
 # Hubot> https://pbs.twimg.com/media/Bsw1StjCQAA9NQ1.jpg:small
 #
+# Hubot> zoi list
 # Hubot> Shell: がんばる
 # Hubot> Shell: あきらめる
 # ...
@@ -144,4 +155,6 @@ module.exports = (robot) ->
             for key, urls of zoi
                 for url in urls
                     arr.push(url)
+            for key, value of robot.brain.data['zoi']
+                arr.push(value)
             msg.send arr[Math.floor(Math.random() * arr.length)]
