@@ -126,6 +126,7 @@ module.exports = (robot) ->
             return
         if not robot.brain.data['zoi'][key]
             robot.brain.data['zoi'][key] = image_url
+            robot.brain.save()
             msg.reply "#{key} を登録しました！"
 
     robot.hear /^zoi remove (.*?)$/, (msg) ->
@@ -140,6 +141,7 @@ module.exports = (robot) ->
             return
         if robot.brain.data['zoi'][key]
             delete robot.brain.data['zoi'][key]
+            robot.brain.save()
             msg.reply "#{key} の登録を消しました！"
 
 
