@@ -15,6 +15,16 @@
 # Hubot> しんちょく zoi
 # Hubot> https://pbs.twimg.com/media/Bsw1StjCQAA9NQ1.jpg:small
 #
+# # zoi add {token} {url}で記憶させられる
+# Hubot> zoi add あいうえお some-image-url
+# Hubot> あいうえおzoi
+# Hubot> some-image-url
+#
+# # なお、1 tokenにつき1 urlのみしか対応づけられない。
+# 
+# zoi remove {token} で記憶を忘れさせられる
+# Hubot> zoi remove あいうえお
+# 
 # # キーワードが存在しない or 空白の時はランダム
 # Hubot> おやすみなさいzoi
 # Hubot> https://pbs.twimg.com/media/BtcSRdRCMAArUCS.jpg:small
@@ -22,6 +32,7 @@
 # Hubot> zoi
 # Hubot> https://pbs.twimg.com/media/Bsw1StjCQAA9NQ1.jpg:small
 #
+# Hubot> zoi list
 # Hubot> Shell: がんばる
 # Hubot> Shell: あきらめる
 # ...
@@ -95,17 +106,57 @@ module.exports = (robot) ->
         list = '\n'
         for key of zoi
             list += key + '\n'
+        if robot.brain.data['zoi']
+            list += '\n' + 'ここからはzoi add {token} {url}で追加したzoiです！' + '\n\n'
+            for key of robot.brain.data['zoi']
+                list += "#{key}" + '\n'
         msg.reply list
         msg.send "よし お仕事頑張るぞ!"
+
+    robot.hear /^zoi add (.*?)\s(.*?)$/, (msg) ->
+        key = msg.match[1]
+        image_url = msg.match[2]
+        if not robot.brain.data['zoi']
+            robot.brain.data['zoi'] = {}
+        if zoi[key]
+            msg.reply "#{key} はデフォルトで登録されています！　変更したいときはhttps://github.com/malt03/sys2014-bot にプルリクエストしてください。"
+            return
+        if robot.brain.data['zoi'][key]
+            msg.reply "#{key} はもう登録してあります。消したいときは zoi remove キーワード url してください。"
+            return
+        if not robot.brain.data['zoi'][key]
+            robot.brain.data['zoi'][key] = image_url
+            robot.brain.save()
+            msg.reply "#{key} を登録しました！"
+
+    robot.hear /^zoi remove (.*?)$/, (msg) ->
+        key = msg.match[1]
+        if not robot.brain.data['zoi']
+            robot.brain.data['zoi'] = {}
+        if zoi[key]
+            msg.reply "#{key} はデフォルトで登録されています！　変更したいときはhttps://github.com/malt03/sys2014-bot にプルリクエストしてください。"
+            return
+        if not robot.brain.data['zoi'][key]
+            msg.reply "#{key} はまだ登録してませんよ？"
+            return
+        if robot.brain.data['zoi'][key]
+            delete robot.brain.data['zoi'][key]
+            robot.brain.save()
+            msg.reply "#{key} の登録を消しました！"
+
 
     robot.hear /^(.*?)\s*zoi$/i, (msg) ->
         key = msg.match[1]
         if zoi[key]?
             url = zoi[key][Math.floor(Math.random() * zoi[key].length)]
             msg.send url
+        else if url = robot.brain.data['zoi'][key]
+            msg.send url
         else
             arr = []
             for key, urls of zoi
                 for url in urls
                     arr.push(url)
+            for key, value of robot.brain.data['zoi']
+                arr.push(value)
             msg.send arr[Math.floor(Math.random() * arr.length)]
