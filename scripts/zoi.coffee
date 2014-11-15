@@ -15,14 +15,14 @@
 # Hubot> しんちょく zoi
 # Hubot> https://pbs.twimg.com/media/Bsw1StjCQAA9NQ1.jpg:small
 #
-# # zoi add {token} {url}で記憶させられる
+# # zoi add {word} {url}で記憶させられる
 # Hubot> zoi add あいうえお some-image-url
 # Hubot> あいうえおzoi
 # Hubot> some-image-url
 #
-# # なお、1 tokenにつき1 urlのみしか対応づけられない。
+# # なお、1 wordにつき1 urlのみしか対応づけられない。
 # 
-# zoi remove {token} で記憶を忘れさせられる
+# zoi remove {word} で記憶を忘れさせられる
 # Hubot> zoi remove あいうえお
 # 
 # # キーワードが存在しない or 空白の時はランダム
@@ -107,14 +107,14 @@ module.exports = (robot) ->
         for key of zoi
             list += key + '\n'
         if robot.brain.data['zoi']
-            list += '\n' + 'ここからはzoi add {token} {url}で追加したzoiです！' + '\n\n'
+            list += '\n' + 'ここからはzoi add {word} {url}で追加したzoiです！' + '\n\n'
             for key of robot.brain.data['zoi']
                 list += "#{key}" + '\n'
         msg.reply list
         msg.send "よし お仕事頑張るぞ!"
 
     robot.hear /^zoi add (.*?)\s(.*?)$/, (msg) ->
-        key = msg.match[1]
+        key = msg.match[1] # wordをkeyとして使う
         image_url = msg.match[2]
         if not robot.brain.data['zoi']
             robot.brain.data['zoi'] = {}
@@ -130,7 +130,7 @@ module.exports = (robot) ->
             msg.reply "#{key} を登録しました！"
 
     robot.hear /^zoi remove (.*?)$/, (msg) ->
-        key = msg.match[1]
+        key = msg.match[1] # wordをkeyとして使う
         if not robot.brain.data['zoi']
             robot.brain.data['zoi'] = {}
         if zoi[key]
