@@ -112,7 +112,7 @@ module.exports = (robot) ->
             if @exist_default(key)
                 return  @default[key][Math.floor(Math.random() * @default[key].length)]
             else if @exist(key)
-                return @brain[key]
+                return @brain.data['zoi'][key]
             else
                 return false
 
@@ -122,7 +122,7 @@ module.exports = (robot) ->
             return false
 
         exist:(key) ->
-            if @brain[key]
+            if @brain.data['zoi'][key]
                 return true
             return false
 
@@ -134,24 +134,24 @@ module.exports = (robot) ->
             else if @exist(key)
                 return false
             else
-                @brain[key] = value
-                robot.brain.save()
+                @brain.data['zoi'][key] = value
+                @brain.save()
                 return value
 
         delete:(key) ->
             if @exist_default(key)
                 return false
             else
-                delete @brain[key]
-                robot.brain.save()
+                delete @brain.data['zoi'][key]
+                @brain.save()
                 return key
 
         update:(key, value) ->
             if @exist_default(key)
                 return false
             else
-                @brain[key] = value
-                robot.brain.save()
+                @brain.data['zoi'][key] = value
+                @brain.save()
                 return value
 
         list_default: ->
@@ -161,10 +161,10 @@ module.exports = (robot) ->
             return list
 
         list: ->
-            return "" if not @brain
+            return "" if not @brain.data['zoi']
 
             list = '\n'
-            for key of @brain
+            for key of @brain.data['zoi']
                 list += "#{key}" + '\n'
             return list
 
@@ -173,12 +173,12 @@ module.exports = (robot) ->
             for key, urls of @default
                 for url in urls
                     arr.push(url)
-            for key, value of @brain
+            for key, value of @brain.data['zoi']
                 arr.push(value)
             return arr[Math.floor(Math.random() * arr.length)]
 
     robot.hear /^zoi list$/i, (msg) ->
-        zoi = new Zoi(robot.brain.data['zoi'])
+        zoi = new Zoi(robot.brain)
         list = zoi.list_default()
         if robot.brain.data['zoi']
             list += '\n' + 'ここからはzoi add {word} {url}で追加したzoiです！'
@@ -187,7 +187,7 @@ module.exports = (robot) ->
         msg.send "よし お仕事頑張るぞ!"
 
     robot.hear /^zoi add (.*?)\s(.*?)$/, (msg) ->
-        zoi = new Zoi(robot.brain.data['zoi'])
+        zoi = new Zoi(robot.brain)
         word = msg.match[1]
         image_url = msg.match[2]
         if zoi.exist_default(word)
@@ -198,7 +198,7 @@ module.exports = (robot) ->
             msg.reply "#{word} を登録しました！" if zoi.add(word, image_url)
 
     robot.hear /^zoi update (.*?)\s(.*?)$/, (msg) ->
-        zoi = new Zoi(robot.brain.data['zoi'])
+        zoi = new Zoi(robot.brain)
         word = msg.match[1]
         image_url = msg.match[2]
         if zoi.exist_default(word)
@@ -209,7 +209,7 @@ module.exports = (robot) ->
             msg.reply "#{word} の登録を変更しました！" if zoi.update(word, image_url)
 
     robot.hear /^zoi remove (.*?)$/, (msg) ->
-        zoi = new Zoi(robot.brain.data['zoi'])
+        zoi = new Zoi(robot.brain)
         word = msg.match[1]
         if zoi.exist_default(word)
             msg.reply "#{word} はデフォルトで登録されています！　変更したいときはhttps://github.com/malt03/sys2014-bot にプルリクエストしてください。"
@@ -219,7 +219,7 @@ module.exports = (robot) ->
             msg.reply "#{word} の登録を消しました！" if zoi.delete(word)
 
     robot.hear /^(.*?)\s*zoi$/i, (msg) ->
-        zoi = new Zoi(robot.brain.data['zoi'])
+        zoi = new Zoi(robot.brain)
         word = msg.match[1]
         if url = zoi.find(word)
             msg.send url
