@@ -21,10 +21,13 @@
 # Hubot> some-image-url
 #
 # # なお、1 tokenにつき1 urlのみしか対応づけられない。
-# 
+#
 # zoi remove {token} で記憶を忘れさせられる
 # Hubot> zoi remove あいうえお
-# 
+#
+# zoi update {token} { url} で記憶を更新させられる
+# Hubot> zoi update あいうえお new-image-url
+#
 # # キーワードが存在しない or 空白の時はランダム
 # Hubot> おやすみなさいzoi
 # Hubot> https://pbs.twimg.com/media/BtcSRdRCMAArUCS.jpg:small
@@ -39,124 +42,186 @@
 # Hubot> Shell: やった
 # Hubot> よし お仕事頑張るぞ!
 
-zoi = {
-    "がんばる":[
-        "https://pbs.twimg.com/media/BspTawrCEAAwQnP.jpg:small"
-        "https://pbs.twimg.com/media/BspTkipCIAE4a0n.jpg:small"
-        "https://pbs.twimg.com/media/BspWSkvCAAAMi43.jpg:small"
-        "https://pbs.twimg.com/media/BspWVoqCEAADtZ4.jpg:small"
-        "https://pbs.twimg.com/media/BspWaPYCAAAI6Ui.jpg:small"
-        "https://pbs.twimg.com/media/BswuTdaCQAAQCkg.jpg:small"
-    ]
-    "あきらめる":[
-        "https://pbs.twimg.com/media/BspWc7LCAAAPzhS.jpg:small"
-        "https://pbs.twimg.com/media/BspWfqoCYAE836J.jpg:small"
-        "https://pbs.twimg.com/media/BtcSLNRCMAAFGoH.jpg:small"
-        "https://pbs.twimg.com/media/BtcSIHmCUAA8Prp.jpg:small"
-    ]
-    "かえる":[
-        "https://pbs.twimg.com/media/BswuLr2CMAA1SpE.jpg:small"
-    ]
-    "きたく":[
-        "https://pbs.twimg.com/media/BtcSRdRCMAArUCS.jpg:small"
-    ]
-    "ごはん":[
-        "https://pbs.twimg.com/media/BspWlZFCMAA4fmV.jpg:small"
-        "https://pbs.twimg.com/media/BswuMrPCEAEECXg.jpg:small"
-        "https://pbs.twimg.com/media/BtcSOp6CcAA9_b4.jpg:small"
-        "https://pbs.twimg.com/media/BtcSFKpCQAAb73x.jpg:small"
-    ]
-    "ねる":[
-        "https://pbs.twimg.com/media/BspWoBQCcAAm9y5.jpg:small"
-        "https://pbs.twimg.com/media/BtcSM8BCYAE3_8j.jpg:small"
-    ]
-    "わかった":[
-        "https://pbs.twimg.com/media/BswuH1qCcAAueYw.jpg:small"
-    ]
-    "いけるきがする":[
-        "https://pbs.twimg.com/media/BswuNkICcAE4olR.jpg:small"
-    ]
-    "あせる":[
-        "https://pbs.twimg.com/media/BswuJviCYAMCdGc.png:small"
-    ]
-    "しんちょく":[
-        "https://pbs.twimg.com/media/Bsw1StjCQAA9NQ1.jpg:small"
-    ]
-    "きゅうけい":[
-        "https://pbs.twimg.com/media/BswuUTPCYAAVX5n.jpg:small"
-        "https://pbs.twimg.com/media/BtcSU0xCcAAmz_W.jpg:small"
-    ]
-    "おはよう":[
-        "https://pbs.twimg.com/media/Bs7qd4uCAAAwalT.jpg:small"
-        "https://pbs.twimg.com/media/Bts7OpFCcAEkaO4.jpg:small"
-    ]
-    "つかれた":[
-        "https://pbs.twimg.com/media/BtcSG05CMAEEyIG.jpg:small"
-    ]
-    "ありがとう":[
-        "https://pbs.twimg.com/media/BtcSDbWCQAADuhK.jpg:small"
-    ]
-    "やった":[
-        "https://pbs.twimg.com/media/Bts7BNsCMAASKsP.jpg:small"
-    ]
-}
-
 module.exports = (robot) ->
-    robot.hear /^zoi list$/i, (msg) ->
-        list = '\n'
-        for key of zoi
-            list += key + '\n'
-        if robot.brain.data['zoi']
-            list += '\n' + 'ここからはzoi add {token} {url}で追加したzoiです！' + '\n\n'
-            for key of robot.brain.data['zoi']
+    class Zoi
+        constructor:(brain) ->
+            @brain = if not brain then {} else brain
+            @default =  {
+                "がんばる":[
+                    "https://pbs.twimg.com/media/BspTawrCEAAwQnP.jpg:small"
+                    "https://pbs.twimg.com/media/BspTkipCIAE4a0n.jpg:small"
+                    "https://pbs.twimg.com/media/BspWSkvCAAAMi43.jpg:small"
+                    "https://pbs.twimg.com/media/BspWVoqCEAADtZ4.jpg:small"
+                    "https://pbs.twimg.com/media/BspWaPYCAAAI6Ui.jpg:small"
+                    "https://pbs.twimg.com/media/BswuTdaCQAAQCkg.jpg:small"
+                ]
+                "あきらめる":[
+                    "https://pbs.twimg.com/media/BspWc7LCAAAPzhS.jpg:small"
+                    "https://pbs.twimg.com/media/BspWfqoCYAE836J.jpg:small"
+                    "https://pbs.twimg.com/media/BtcSLNRCMAAFGoH.jpg:small"
+                    "https://pbs.twimg.com/media/BtcSIHmCUAA8Prp.jpg:small"
+                ]
+                "かえる":[
+                    "https://pbs.twimg.com/media/BswuLr2CMAA1SpE.jpg:small"
+                ]
+                "きたく":[
+                    "https://pbs.twimg.com/media/BtcSRdRCMAArUCS.jpg:small"
+                ]
+                "ごはん":[
+                    "https://pbs.twimg.com/media/BspWlZFCMAA4fmV.jpg:small"
+                    "https://pbs.twimg.com/media/BswuMrPCEAEECXg.jpg:small"
+                    "https://pbs.twimg.com/media/BtcSOp6CcAA9_b4.jpg:small"
+                    "https://pbs.twimg.com/media/BtcSFKpCQAAb73x.jpg:small"
+                ]
+                "ねる":[
+                    "https://pbs.twimg.com/media/BspWoBQCcAAm9y5.jpg:small"
+                    "https://pbs.twimg.com/media/BtcSM8BCYAE3_8j.jpg:small"
+                ]
+                "わかった":[
+                    "https://pbs.twimg.com/media/BswuH1qCcAAueYw.jpg:small"
+                ]
+                "いけるきがする":[
+                    "https://pbs.twimg.com/media/BswuNkICcAE4olR.jpg:small"
+                ]
+                "あせる":[
+                    "https://pbs.twimg.com/media/BswuJviCYAMCdGc.png:small"
+                ]
+                "しんちょく":[
+                    "https://pbs.twimg.com/media/Bsw1StjCQAA9NQ1.jpg:small"
+                ]
+                "きゅうけい":[
+                    "https://pbs.twimg.com/media/BswuUTPCYAAVX5n.jpg:small"
+                    "https://pbs.twimg.com/media/BtcSU0xCcAAmz_W.jpg:small"
+                ]
+                "おはよう":[
+                    "https://pbs.twimg.com/media/Bs7qd4uCAAAwalT.jpg:small"
+                    "https://pbs.twimg.com/media/Bts7OpFCcAEkaO4.jpg:small"
+                ]
+                "つかれた":[
+                    "https://pbs.twimg.com/media/BtcSG05CMAEEyIG.jpg:small"
+                ]
+                "ありがとう":[
+                    "https://pbs.twimg.com/media/BtcSDbWCQAADuhK.jpg:small"
+                ]
+                "やった":[
+                    "https://pbs.twimg.com/media/Bts7BNsCMAASKsP.jpg:small"
+                ]
+            }
+
+        find:(key) ->
+            if @exist_default(key)
+                return  @default[key][Math.floor(Math.random() * @default[key].length)]
+            else if @exist(key)
+                return @brain[key]
+            else
+                return false
+
+        exist_default:(key) ->
+            if @default[key]
+                return true
+            return false
+
+        exist:(key) ->
+            if @brain[key]
+                return true
+            return false
+
+        add:(key, value) ->
+            @exist(key)
+            @exist_default(key)
+            if @exist_default(key)
+                return false
+            else if @exist(key)
+                return false
+            else
+                @brain[key] = value
+                return value
+
+        delete:(key) ->
+            if @exist_default(key)
+                return false
+            else
+                delete @brain[key]
+                return key
+
+        update:(key, value) ->
+            if @exist_default(key)
+                return false
+            else
+                @brain[key] = value
+                return value
+
+        list_default: ->
+            list = '\n'
+            for key of @default
+                list += key + '\n'
+            return list
+
+        list: ->
+            return "" if not @brain
+
+            list = '\n'
+            for key of @brain
                 list += "#{key}" + '\n'
+            return list
+
+        random: ->
+            arr = []
+            for key, urls of @default
+                for url in urls
+                    arr.push(url)
+            for key, value of @brain
+                arr.push(value)
+            return arr[Math.floor(Math.random() * arr.length)]
+
+    robot.hear /^zoi list$/i, (msg) ->
+        zoi = new Zoi(robot.brain.data['zoi'])
+        list = zoi.list_default()
+        if robot.brain.data['zoi']
+            list += '\n' + 'ここからはzoi add {token} {url}で追加したzoiです！'
+            list += zoi.list()
         msg.reply list
         msg.send "よし お仕事頑張るぞ!"
 
     robot.hear /^zoi add (.*?)\s(.*?)$/, (msg) ->
+        zoi = new Zoi(robot.brain.data['zoi'])
         key = msg.match[1]
         image_url = msg.match[2]
-        if not robot.brain.data['zoi']
-            robot.brain.data['zoi'] = {}
-        if zoi[key]
+        if zoi.exist_default(key)
             msg.reply "#{key} はデフォルトで登録されています！　変更したいときはhttps://github.com/malt03/sys2014-bot にプルリクエストしてください。"
-            return
-        if robot.brain.data['zoi'][key]
+        else if zoi.exist(key)
             msg.reply "#{key} はもう登録してあります。消したいときは zoi remove キーワード url してください。"
-            return
-        if not robot.brain.data['zoi'][key]
-            robot.brain.data['zoi'][key] = image_url
+        else
+            msg.reply "#{key} を登録しました！" if zoi.add(key, image_url)
             robot.brain.save()
-            msg.reply "#{key} を登録しました！"
+
+    robot.hear /^zoi update (.*?)\s(.*?)$/, (msg) ->
+        zoi = new Zoi(robot.brain.data['zoi'])
+        key = msg.match[1]
+        image_url = msg.match[2]
+        if zoi.exist_default(key)
+            msg.reply "#{key} はデフォルトで登録されています！　変更したいときはhttps://github.com/malt03/sys2014-bot にプルリクエストしてください。"
+        else if not zoi.exist(key)
+            msg.reply "#{key} はまだ登録してませんよ？"
+        else
+            msg.reply "#{key} の登録を変更しました！" if zoi.update(key, image_url)
+            robot.brain.save()
 
     robot.hear /^zoi remove (.*?)$/, (msg) ->
+        zoi = new Zoi(robot.brain.data['zoi'])
         key = msg.match[1]
-        if not robot.brain.data['zoi']
-            robot.brain.data['zoi'] = {}
-        if zoi[key]
+        if zoi.exist_default(key)
             msg.reply "#{key} はデフォルトで登録されています！　変更したいときはhttps://github.com/malt03/sys2014-bot にプルリクエストしてください。"
-            return
-        if not robot.brain.data['zoi'][key]
+        else if not zoi.exist(key)
             msg.reply "#{key} はまだ登録してませんよ？"
-            return
-        if robot.brain.data['zoi'][key]
-            delete robot.brain.data['zoi'][key]
+        else
+            msg.reply "#{key} の登録を消しました！" if zoi.delete(key)
             robot.brain.save()
-            msg.reply "#{key} の登録を消しました！"
-
 
     robot.hear /^(.*?)\s*zoi$/i, (msg) ->
+        zoi = new Zoi(robot.brain.data['zoi'])
         key = msg.match[1]
-        if zoi[key]?
-            url = zoi[key][Math.floor(Math.random() * zoi[key].length)]
-            msg.send url
-        else if url = robot.brain.data['zoi'][key]
+        if url = zoi.find(key)
             msg.send url
         else
-            arr = []
-            for key, urls of zoi
-                for url in urls
-                    arr.push(url)
-            for key, value of robot.brain.data['zoi']
-                arr.push(value)
-            msg.send arr[Math.floor(Math.random() * arr.length)]
+            msg.send zoi.random()
