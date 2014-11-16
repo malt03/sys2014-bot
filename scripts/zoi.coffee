@@ -15,17 +15,17 @@
 # Hubot> しんちょく zoi
 # Hubot> https://pbs.twimg.com/media/Bsw1StjCQAA9NQ1.jpg:small
 #
-# # zoi add {token} {url}で記憶させられる
+# # zoi add {word} {url}で記憶させられる
 # Hubot> zoi add あいうえお some-image-url
 # Hubot> あいうえおzoi
 # Hubot> some-image-url
 #
-# # なお、1 tokenにつき1 urlのみしか対応づけられない。
+# # なお、1 wordにつき1 urlのみしか対応づけられない。
 #
-# zoi remove {token} で記憶を忘れさせられる
+# zoi remove {word} で記憶を忘れさせられる
 # Hubot> zoi remove あいうえお
 #
-# zoi update {token} { url} で記憶を更新させられる
+# zoi update {word} { url} で記憶を更新させられる
 # Hubot> zoi update あいうえお new-image-url
 #
 # # キーワードが存在しない or 空白の時はランダム
@@ -185,43 +185,43 @@ module.exports = (robot) ->
 
     robot.hear /^zoi add (.*?)\s(.*?)$/, (msg) ->
         zoi = new Zoi(robot.brain.data['zoi'])
-        key = msg.match[1]
+        word = msg.match[1]
         image_url = msg.match[2]
-        if zoi.exist_default(key)
-            msg.reply "#{key} はデフォルトで登録されています！　変更したいときはhttps://github.com/malt03/sys2014-bot にプルリクエストしてください。"
-        else if zoi.exist(key)
-            msg.reply "#{key} はもう登録してあります。消したいときは zoi remove キーワード url してください。"
+        if zoi.exist_default(word)
+            msg.reply "#{word} はデフォルトで登録されています！　変更したいときはhttps://github.com/malt03/sys2014-bot にプルリクエストしてください。"
+        else if zoi.exist(word)
+            msg.reply "#{word} はもう登録してあります。消したいときは zoi remove キーワード url してください。"
         else
-            msg.reply "#{key} を登録しました！" if zoi.add(key, image_url)
+            msg.reply "#{word} を登録しました！" if zoi.add(word, image_url)
             robot.brain.save()
 
     robot.hear /^zoi update (.*?)\s(.*?)$/, (msg) ->
         zoi = new Zoi(robot.brain.data['zoi'])
-        key = msg.match[1]
+        word = msg.match[1]
         image_url = msg.match[2]
-        if zoi.exist_default(key)
-            msg.reply "#{key} はデフォルトで登録されています！　変更したいときはhttps://github.com/malt03/sys2014-bot にプルリクエストしてください。"
-        else if not zoi.exist(key)
-            msg.reply "#{key} はまだ登録してませんよ？"
+        if zoi.exist_default(word)
+            msg.reply "#{word} はデフォルトで登録されています！　変更したいときはhttps://github.com/malt03/sys2014-bot にプルリクエストしてください。"
+        else if not zoi.exist(word)
+            msg.reply "#{word} はまだ登録してませんよ？"
         else
-            msg.reply "#{key} の登録を変更しました！" if zoi.update(key, image_url)
+            msg.reply "#{word} の登録を変更しました！" if zoi.update(word, image_url)
             robot.brain.save()
 
     robot.hear /^zoi remove (.*?)$/, (msg) ->
         zoi = new Zoi(robot.brain.data['zoi'])
-        key = msg.match[1]
-        if zoi.exist_default(key)
-            msg.reply "#{key} はデフォルトで登録されています！　変更したいときはhttps://github.com/malt03/sys2014-bot にプルリクエストしてください。"
-        else if not zoi.exist(key)
-            msg.reply "#{key} はまだ登録してませんよ？"
+        word = msg.match[1]
+        if zoi.exist_default(word)
+            msg.reply "#{word} はデフォルトで登録されています！　変更したいときはhttps://github.com/malt03/sys2014-bot にプルリクエストしてください。"
+        else if not zoi.exist(word)
+            msg.reply "#{word} はまだ登録してませんよ？"
         else
-            msg.reply "#{key} の登録を消しました！" if zoi.delete(key)
+            msg.reply "#{word} の登録を消しました！" if zoi.delete(word)
             robot.brain.save()
 
     robot.hear /^(.*?)\s*zoi$/i, (msg) ->
         zoi = new Zoi(robot.brain.data['zoi'])
-        key = msg.match[1]
-        if url = zoi.find(key)
+        word = msg.match[1]
+        if url = zoi.find(word)
             msg.send url
         else
             msg.send zoi.random()
