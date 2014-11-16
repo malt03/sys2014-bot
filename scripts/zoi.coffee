@@ -135,6 +135,7 @@ module.exports = (robot) ->
                 return false
             else
                 @brain[key] = value
+                robot.brain.save()
                 return value
 
         delete:(key) ->
@@ -142,6 +143,7 @@ module.exports = (robot) ->
                 return false
             else
                 delete @brain[key]
+                robot.brain.save()
                 return key
 
         update:(key, value) ->
@@ -149,6 +151,7 @@ module.exports = (robot) ->
                 return false
             else
                 @brain[key] = value
+                robot.brain.save()
                 return value
 
         list_default: ->
@@ -193,7 +196,6 @@ module.exports = (robot) ->
             msg.reply "#{word} はもう登録してあります。消したいときは zoi remove キーワード url してください。"
         else
             msg.reply "#{word} を登録しました！" if zoi.add(word, image_url)
-            robot.brain.save()
 
     robot.hear /^zoi update (.*?)\s(.*?)$/, (msg) ->
         zoi = new Zoi(robot.brain.data['zoi'])
@@ -205,7 +207,6 @@ module.exports = (robot) ->
             msg.reply "#{word} はまだ登録してませんよ？"
         else
             msg.reply "#{word} の登録を変更しました！" if zoi.update(word, image_url)
-            robot.brain.save()
 
     robot.hear /^zoi remove (.*?)$/, (msg) ->
         zoi = new Zoi(robot.brain.data['zoi'])
@@ -216,7 +217,6 @@ module.exports = (robot) ->
             msg.reply "#{word} はまだ登録してませんよ？"
         else
             msg.reply "#{word} の登録を消しました！" if zoi.delete(word)
-            robot.brain.save()
 
     robot.hear /^(.*?)\s*zoi$/i, (msg) ->
         zoi = new Zoi(robot.brain.data['zoi'])
