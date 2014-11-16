@@ -178,7 +178,7 @@ module.exports = (robot) ->
         zoi = new Zoi(robot.brain.data['zoi'])
         list = zoi.list_default()
         if robot.brain.data['zoi']
-            list += '\n' + 'ここからはzoi add {token} {url}で追加したzoiです！'
+            list += '\n' + 'ここからはzoi add {word} {url}で追加したzoiです！'
             list += zoi.list()
         msg.reply list
         msg.send "よし お仕事頑張るぞ!"
