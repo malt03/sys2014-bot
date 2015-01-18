@@ -42,6 +42,8 @@
 # Hubot> Shell: やった
 # Hubot> よし お仕事頑張るぞ!
 
+crypto = require 'crypto'
+
 module.exports = (robot) ->
     class Zoi
         constructor:(brain) ->
@@ -219,9 +221,11 @@ module.exports = (robot) ->
             msg.reply "#{word} の登録を消しました！" if zoi.delete(word)
 
     robot.hear /^(.*?)\s*zoi$/i, (msg) ->
+        rand_str = crypto.createHash('md5').update(Math.random().toString()).digest("hex")[0..4]
+
         zoi = new Zoi(robot.brain)
         word = msg.match[1]
         if url = zoi.find(word)
-            msg.send url
+            msg.send url + '#' + rand_str
         else
-            msg.send zoi.random()
+            msg.send zoi.random() + '#' + rand_str
