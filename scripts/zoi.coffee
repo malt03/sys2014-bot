@@ -155,7 +155,7 @@ module.exports = (robot) ->
                 keywords.push(keyword)
             return keywords
 
-    # default値とカスタム値を強調させるZoiのMainとなるクラス
+    # default値とカスタム値を協調させるZoiのMainとなるクラス
     class Zoi
         constructor:(brain) ->
             @_zoi_custom = new ZoiCustom(brain)
