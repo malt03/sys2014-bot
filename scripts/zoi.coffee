@@ -231,17 +231,16 @@ module.exports = (robot) ->
         default_keywords = zoi.only_default().keywords()
         description_message = '\nここからはzoi add {word} {url}で追加したzoiです！'
         custom_keywords = zoi.only_custom().keywords()
-        all_messages = default_keywords.concat(description_message).concat(custom_keywords)
-        msg.reply all_messages.toString().replace(/,/g, "\n")
+        msg.reply default_keywords.join('\n') + description_message + custom_keywords.join('\n')
         msg.send "よし お仕事頑張るぞ!"
 
     robot.hear /^zoi list default$/i, (msg) ->
         zoi = new ZoiDefault
-        msg.reply zoi.keywords().toString().replace(/,/g, "\n")
+        msg.reply zoi.keywords().join('\n')
 
     robot.hear /^zoi list custom$/i, (msg) ->
         zoi = new ZoiCustom(robot.brain)
-        msg.reply zoi.keywords().toString().replace(/,/g, "\n")
+        msg.reply zoi.keywords().join('\n')
 
     robot.hear /^(.*?)\s*zoi$/i, (msg) ->
         rand_str = Crypto.createHash('md5').update(Math.random().toString()).digest("hex")[0..4]
