@@ -31,5 +31,5 @@ module.exports = (robot) ->
             return
 
         restaurant = list[Math.floor(Math.random() * list.length)]
-        msg.reply "今日のランチは #{restaurant.name} でどうですか？"
+        msg.reply "今日のランチは #{restaurant.name} p#{restaurant.page}でどうですか？"
         msg.reply getGoogleMapUrl(restaurant.name)
