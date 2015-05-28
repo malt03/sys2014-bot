@@ -42,8 +42,6 @@
 # Hubot> Shell: やった
 # Hubot> よし お仕事頑張るぞ!
 
-Crypto = require 'crypto'
-
 module.exports = (robot) ->
     # Zoiのデフォルト値を司るクラス(実質ReadOnly)
     class ZoiDefault
@@ -243,9 +241,7 @@ module.exports = (robot) ->
         msg.reply zoi.keywords().join('\n')
 
     robot.hear /^(.*?)\s*zoi$/i, (msg) ->
-        rand_str = Crypto.createHash('md5').update(Math.random().toString()).digest("hex")[0..4]
-
         zoi = new Zoi(robot.brain)
         word = msg.match[1]
         url = (zoi.find(word) || zoi.random())
-        msg.send url + '#' + rand_str
+        msg.send url
