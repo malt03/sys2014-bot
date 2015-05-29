@@ -229,7 +229,7 @@ module.exports = (robot) ->
     robot.hear /^zoi list$/i, (msg) ->
         zoi = new Zoi(robot.brain)
         default_keywords = zoi.only_default().keywords()
-        description_message = '\nここからはzoi add {word} {url}で追加したzoiです！'
+        description_message = '\nここからはzoi add {word} {url}で追加したzoiです！\n'
         custom_keywords = zoi.only_custom().keywords()
         msg.reply default_keywords.join('\n') + description_message + custom_keywords.join('\n')
         msg.send "よし お仕事頑張るぞ!"
