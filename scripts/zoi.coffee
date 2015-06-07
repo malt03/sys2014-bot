@@ -42,8 +42,6 @@
 # Hubot> Shell: やった
 # Hubot> よし お仕事頑張るぞ!
 
-Crypto = require 'crypto'
-
 module.exports = (robot) ->
     # Zoiのデフォルト値を司るクラス(実質ReadOnly)
     class ZoiDefault
